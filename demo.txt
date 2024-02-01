@@ -1,0 +1,44 @@
+# breakdown original_image->grayscale_image->edge_image->contours->biggest_rect
+# ->warp_prespective_image(birds_eye_view)->theshold_image->find_mark->save_with_score
+
+
+import cv2
+import numpy as np
+import utlis
+
+##############################
+path = "1.jpg"
+widthImg = 700
+heightImg = 700
+##############################
+
+img = cv2.imread(path)
+img = cv2.resize(img, (widthImg, heightImg))
+imgContrours = img.copy()
+####gray scal#########
+imgGray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
+#####GaussianBlur#####
+imgBlur= cv2.GaussianBlur(imgGray, (5, 5),1)
+#####Image kannay edgy detect######
+imgCanny = cv2.Canny(imgBlur, 10, 50)
+
+#####Contors##################
+contours, hierarchy = cv2.findContours(imgCanny, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_NONE)
+cv2.drawContours(imgCanny, contours,-1,(0,255,0),10)
+
+imgBlank = np.zeros_like(img)
+imageArray = ([img,imgGray,imgBlur,imgCanny])
+imgStacked = utlis.stackImages(imageArray,0.5)
+
+cv2.imshow("Original", imgStacked)
+cv2.waitKey(0)
+def print_hi(name):
+    # Use a breakpoint in the code line below to debug your script.
+    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
+
+
+# Press the green button in the gutter to run the script.
+if __name__ == '__main__':
+    print_hi('Asadzaman')
+
+# See PyCharm help at https://www.jetbrains.com/help/pycharm/
